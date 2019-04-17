@@ -1,21 +1,27 @@
-import cv2
-import numpy as np
-import DetectionOfCopyMoveForgery
+from DetectionOfCopyMoveForgery import *
 
 
-img = cv2.imread("indir.bmp" ,0)
+
+
+
+img = cv2.imread("aa" ,0)
 height, width= img.shape
 
-"""for i in range (512):
-    for j in range(512):
-        img[i][j]=0"""
+asd = DetectionofCopyMoveForgery(img,height,width,16,16)
+asd.dct_of_img()
+# z=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24]]
+# zz= np.array([[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15]])
+# zz1=np.array([[0,1,2],[3,4,5],[6,7,8]])
+# print(zigzag(z))
 
-imf = np.float32(img)/255.0
-dst = cv2.dct(imf)
-crop_img = img[10:10+50, 20:20+30]
-#cv2.imshow("cropped", crop_img)
 
-cv2.imshow("sonuc",dst)
+
+
+
+
+#mask = np.ones((8,8)) print(mask)
+
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 # cv2.imwrite("sonuc.bmp",img)
