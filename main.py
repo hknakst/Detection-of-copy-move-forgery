@@ -1,21 +1,24 @@
 from DetectionOfCopyMoveForgery import *
 
 
+def oklida(vector1, vector2, size):
+    sum = 0
+    for i in range(size):
+        sum = sum + (vector2[i] - vector1[i]) ** 2
 
-
+    return sqrt(sum)
 
 img = cv2.imread("aa" ,0)
 height, width= img.shape
 
 asd = DetectionofCopyMoveForgery(img,height,width,16,16)
-asd.dct_of_img()
-# z=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24]]
-# zz= np.array([[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15]])
-# zz1=np.array([[0,1,2],[3,4,5],[6,7,8]])
+#asd.detection_forgery()
+#z=[[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[0,0,0,1000,0],[0,0,0,10,100],[0,0,0,1000,-1]]
+zz= np.array([[0,1,2],[4,5,6],[8,9,10],[12,13,14]])
+zz1=np.array([[0,1,5],[3,4,5],[6,7,8]])
 # print(zigzag(z))
 
-
-
+print(oklida(zz[1],zz1[1],3))
 
 
 
