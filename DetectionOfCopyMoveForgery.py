@@ -18,9 +18,9 @@ class DetectionofCopyMoveForgery:
     def detection_forgery(self):
         self.dct_of_img()
         self.lexicographically_sort_of_vectors(self.vector,self.sizeof_vector)
-        for i in range(100):
-            print(self.vector[i])
-
+        self.correlation_of_vectors(0.1 ,5)
+        cv2.imshow("sonuc",self.img)
+        cv2.waitKey(0)
 
 
     def dct_of_img(self):
@@ -28,11 +28,11 @@ class DetectionofCopyMoveForgery:
         for r in range(0, self.height - self.blocksize_r, self.blocksize_r):
             for c in range(0, self.width - self.blocksize_c, self.blocksize_c):
                 block = self.img[r:r + self.blocksize_r, c:c + self.blocksize_c]
-                imf = (block) / 255.0  #0 ile 1 arasında normalize ediyoruz
+                imf = np.float32(block) / 255.0  #0 ile 1 arasında normalize ediyoruz
                 dst = np.round(cv2.dct(imf),6)      # block block dst uyguluyoruz ve virgülden sonraki 6. basamağı yumarlıyoruz
                 self.significant_part_extraction(self.zigzag(dst),self.sizeof_vector,c,r)
-                # cv2.imshow("sonuc",block)
-                # cv2.waitKey(0)
+
+
 
     def zigzag(self,matrix):
         """Scan matrix of zigzag algorithm"""
@@ -72,14 +72,14 @@ class DetectionofCopyMoveForgery:
         vector.append(matrix[i][j])
         return vector
 
-    def significant_part_extraction(self,vector,significant_size,column,row):
+    def significant_part_extraction(self,vector,significant_size,x,y):
 
         # 1x64 boyutundaki vectorden sadece alcak freans yani anlamli kismini cikarmak icin belirlenen(16) degere kadar pop islemi yapilir.
         for i in range((self.blocksize_c * self.blocksize_r),significant_size, -1):
             vector.pop()
 
-        vector.append(column)  # blogun baslangıc kordinatının x noktası vektorun sonuna ekleniyor
-        vector.append(row)  # aynı sekilde y noktası ekleniyor
+        vector.append(x)  # blogun baslangıc kordinatının x noktası vektorun sonuna ekleniyor
+        vector.append(y)  # aynı sekilde y noktası ekleniyor
         # her block sonucunu vector listemize atiyoruz.
         self.vector.append(vector)
 
@@ -106,13 +106,27 @@ class DetectionofCopyMoveForgery:
     def correlation_of_vectors(self,oklid_threshold,correlation_threshold):
 
         for i in range(len(self.vector)):
-            if(i+correlation_threshold >=len(self.vector)):
+            if(i+correlation_threshold >= len(self.vector)):
                 correlation_threshold -=1
             for j in range(i+1,i+correlation_threshold+1):
                 if(self.oklid(self.vector[i],self.vector[j],self.sizeof_vector) <= oklid_threshold):
-                    pass
-                
+                    v1=[]
+                    v2=[]
+                    v1.append(self.vector[i][-2]) #x1
+                    v1.append(self.vector[i][-1]) #y1
+                    v2.append(self.vector[j][-2]) #x2
+                    v2.append(self.vector[j][-1]) #y2
+                    self.elimination_of_weak_vectors(v1,v2,2,10)
 
+
+    def elimination_of_weak_vectors(self,vector1,vector2,size,threshold_lenght):
+        if(self.oklid(vector1,vector2,size) >= threshold_lenght):
+            print(self.oklid(vector1,vector2,size))
+            cv2.line(self.img,(vector1[0],vector1[1]),(vector2[0],vector2[1]),(0),2)
+            self.elimination_of_weak_area(vector1,vector2,10)
+
+    def elimination_of_weak_area(self,vector1,vector2,threshold_num_ofvectors):
+        pass
 
     def oklid(self,vector1,vector2,size):
         sum=0
