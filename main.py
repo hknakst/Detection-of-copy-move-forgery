@@ -9,35 +9,8 @@ height, width= img.shape
 # imf = np.float32(img) / 255.0  # 0 ile 1 arasında normalize ediyoruz
 # dst = np.round(cv2.dct(imf), 6)  # block block dst uyguluyoruz ve virgülden sonraki 6. basamağı yumarlıyoruz
 
-# print(dst)
-# cv2.imshow("dst",dst)
-# cv2.waitKey(0)
-# print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-# img1 = cv2.imread('ab.png',0)
-# h, w = img1.shape[:2]
-# vis0 = np.zeros((h,w), np.float32)
-# vis0[:h, :w] = img1
-# vis1 = cv2.dct(vis0)
-#
-# print(vis1)
-# print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-# cv2.imshow("vis1",vis1)
-# cv2.waitKey(0)
-#
-# img1 = cv2.imread('ab.png')
-# # or use cv2.CV_LOAD_IMAGE_GRAYSCALE
-# img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-#
-# w,h = img1.shape
-# # make a 32bit float for doing the dct within
-# img2 = np.zeros((w,h), dtype=np.float32)
-# img2 = img2+img1[:w, :h]
-# dct1 = cv2.dct(img2)
-# print(dct1)
-# cv2.imshow("dct1",dct1)
-# cv2.waitKey(0)
 
-asd = DetectionofCopyMoveForgery(img,height,width,8,8)
+
 
 z=np.array([[0,0,0,3,4],[1,0,0,1,1],[2,0,0,0,0],[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[0,0,0,10,5],[0,0,0,10,1],[0,0,0,1000,-1]])
 z1=np.array([[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[1,0,0,1000,0],[0,0,0,10,100],[0,0,0,1000,-1]])
@@ -64,17 +37,10 @@ ornek2=[[ 3.35000e+00,  1.72303e-01 , 2.92690e-02 , 2.25820e-02 , 2.15690e-02, -
 
 
 
-# z1=np.rot90(z)
-# print(z1)
-# print(z1[0:2,:])
-# z =z[np.lexsort(z1[4:6,0:12])]
-# print(z)
 
-# z=z[np.lexsort(np.rot90(z)[1:(4+1+1),:])]
-# print(z)
-
+asd = DetectionofCopyMoveForgery(img,height,width,8,0.02,20,50,10)
 asd.detection_forgery()
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-# cv2.imwrite("sonuc.bmp",img)
+
