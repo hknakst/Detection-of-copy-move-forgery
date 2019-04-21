@@ -16,7 +16,7 @@ class DetectionofCopyMoveForgery:
         self.num_ofvector_threshold=num_ofvector_threshold
 
         self.block_vector=[]
-        self.sizeof_vector=8;
+        self.sizeof_vector=25;
         self.hough_space = (self.height, self.width)
         self.hough_space = np.zeros(self.hough_space)
         self.shiftvector=[]
@@ -28,14 +28,21 @@ class DetectionofCopyMoveForgery:
         self.correlation_of_vectors()
 
         #son olarakan belirlenen esik degerine gore ayni dogrultudaki shift vektor sayisina gore sahte alanlar belirleniyor.
+        max=-1
         for i in range(self.height):
             for j in range(self.width):
-                if (self.hough_space[i][j]) >self.num_ofvector_threshold:
+                if(self.hough_space[i][j]) > max:
+                    max = self.hough_space[i][j]
+
+        for i in range(self.height):
+            for j in range(self.width):
+                if (self.hough_space[i][j]) >= (max - (max*self.num_ofvector_threshold/100)):
                     for k in range(len(self.shiftvector)):
                         if self.shiftvector[k][0]==j and self.shiftvector[k][1]==i:
                             cv2.line(self.img, (self.shiftvector[k][2], self.shiftvector[k][3]), (self.shiftvector[k][4], self.shiftvector[k][5]), (0), 2)
+                            cv2.rectangle(self.img,(self.shiftvector[k][2], self.shiftvector[k][3]),(self.shiftvector[k][2]+self.blocksize, self.shiftvector[k][3]+self.blocksize), (0), 2)
+                            cv2.rectangle(self.img, (self.shiftvector[k][4], self.shiftvector[k][5]),(self.shiftvector[k][4] + self.blocksize, self.shiftvector[k][5] + self.blocksize), (0), 2)
         cv2.imshow("sonuc",self.img)
-        cv2.waitKey(0)
 
 
     def dct_of_img(self):
@@ -43,11 +50,9 @@ class DetectionofCopyMoveForgery:
         for r in range(0, self.height, self.blocksize):
             for c in range(0, self.width, self.blocksize):
                 block = self.img[r:r + self.blocksize, c:c + self.blocksize]
-                # imf = np.float32(block)  #0 ile 1 arasında normalize ediyoruz
-                # dct = cv2.dct(imf)      # block block dst uyguluyoruz ve virgülden sonraki 6. basamağı yumarlıyoruz
-                img2 = np.zeros((self.blocksize, self.blocksize), dtype=np.float32)
-                img2 = img2 + block[:self.blocksize, :self.blocksize]
-                dct = cv2.dct(img2)
+                imf = np.float32(block)  #0 ile 1 arasında normalize ediyoruz
+                dct = np.round(cv2.dct(imf),1)      # block block dst uyguluyoruz ve virgülden sonraki 6. basamağı yumarlıyoruz
+
 
                 QUANTIZATION_MAT_50 = np.array([[16, 11, 10, 16, 24, 40, 51, 61], [12, 12, 14, 19, 26, 58, 60, 55],
                                              [14, 13, 16, 24, 40, 57, 69, 56], [14, 17, 22, 29, 51, 87, 80, 62],
@@ -58,7 +63,7 @@ class DetectionofCopyMoveForgery:
                                              [90, 110, 185,  255, 255,255,255,255], [120, 175, 255, 255,255,255, 255,255],
                                              [255, 255,255,255, 255,255,255,255], [255, 255,255,255, 255,255,255,255]])
                 #dct donusumu quantalama matrisine bolerek sıkıstırırız iliskilere baktigimiz icin buna gerek olmayabilir..
-                dct= np.divide(dct, QUANTIZATION_MAT_50).astype(int)
+                #dct= np.round(np.divide(dct, QUANTIZATION_MAT_50))
                 self.significant_part_extraction(self.zigzag(dct),self.sizeof_vector,c,r)
 
 
@@ -118,7 +123,7 @@ class DetectionofCopyMoveForgery:
         #ayni zamanda son iki yani ters cevirince ilk iki satirida koordinat bilgimiz var bunları sıralamicaz.
         self.block_vector=np.array(self.block_vector)
         self.block_vector= self.block_vector[np.lexsort(np.rot90(self.block_vector)[2:(self.sizeof_vector + 1) + 2 , :])]
-        self.block_vector=np.round(self.block_vector, 3)
+
 
         # for i in range(sort_size):
         #     for j in range(len(vector)):
@@ -180,7 +185,7 @@ class DetectionofCopyMoveForgery:
         vector.append(vector1[1])
         vector.append(vector2[0])
         vector.append(vector2[1])
-        self.shiftvector.append(vector)
+        self.shiftvector.append(vector)  # sirasiyla hough kordinati , 1.vektorun kordinati, 2.vektorun kordinati
 
 
     def oklid(self,vector1,vector2,size):
