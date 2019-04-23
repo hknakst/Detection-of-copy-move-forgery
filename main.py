@@ -3,12 +3,12 @@ from DetectionOfCopyMoveForgery import *
 
 
 
-img = cv2.imread("33.png" ,0)
+img = cv2.imread("biber.png" ,0)
 height, width= img.shape
 
 
 #(self, img, height, width, blocksize, oklid_threshold, correlation_threshold, vec_len_threshold, num_ofvector_threshold):
-asd = DetectionofCopyMoveForgery(img,height,width,8,20,30,150,5)
+asd = DetectionofCopyMoveForgery(img,height,width,8,20,20,150,5)
 asd.detection_forgery()
 
 
