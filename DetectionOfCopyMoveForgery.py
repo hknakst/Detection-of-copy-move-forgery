@@ -47,12 +47,12 @@ class DetectionofCopyMoveForgery:
 
     def dct_of_img(self):
 
-        for r in range(0, self.height, self.blocksize):
-            for c in range(0, self.width, self.blocksize):
+        for r in range(0, self.height-self.blocksize, 1):
+            for c in range(0, self.width-self.blocksize,1):
                 block = self.img[r:r + self.blocksize, c:c + self.blocksize]
                 imf = np.float32(block)  #0 ile 1 arasında normalize ediyoruz
-                dct = np.round(cv2.dct(imf),1)      # block block dst uyguluyoruz ve virgülden sonraki 6. basamağı yumarlıyoruz
-
+                dct = cv2.dct(imf)      # block block dst uyguluyoruz ve virgülden sonraki 6. basamağı yumarlıyoruz
+                dct = dct/16
 
                 QUANTIZATION_MAT_50 = np.array([[16, 11, 10, 16, 24, 40, 51, 61], [12, 12, 14, 19, 26, 58, 60, 55],
                                              [14, 13, 16, 24, 40, 57, 69, 56], [14, 17, 22, 29, 51, 87, 80, 62],
