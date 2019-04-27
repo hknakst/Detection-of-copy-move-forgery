@@ -291,3 +291,5 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/linux,opencv,python,pycharm,pycharm+all
+forged_images
+photo
