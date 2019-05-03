@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from math import sqrt
+import time
 
 
 class DetectionofCopyMoveForgery:
@@ -23,9 +24,18 @@ class DetectionofCopyMoveForgery:
 
 
     def detection_forgery(self):
+        start = time.time()
         self.dct_of_img()
+        end = time.time()
+        print(end - start)
+        start1 = time.time()
         self.lexicographically_sort_of_vectors()
+        end1 = time.time()
+        print(end1 - start1)
+        start2 = time.time()
         self.correlation_of_vectors()
+        end2 = time.time()
+        print(end2 - start2)
 
         #son olarakan belirlenen esik degerine gore ayni dogrultudaki shift vektor sayisina gore sahte alanlar belirleniyor.
         max=-1
@@ -33,15 +43,17 @@ class DetectionofCopyMoveForgery:
             for j in range(self.width):
                 if(self.hough_space[i][j]) > max:
                     max = self.hough_space[i][j]
+        for i in range(self.height):
+            for j in range(self.width):
+                self.img[i][j]=0
 
         for i in range(self.height):
             for j in range(self.width):
                 if (self.hough_space[i][j]) >= (max - (max*self.num_ofvector_threshold/100)):
                     for k in range(len(self.shiftvector)):
                         if self.shiftvector[k][0]==j and self.shiftvector[k][1]==i:
-                            cv2.line(self.img, (self.shiftvector[k][2], self.shiftvector[k][3]), (self.shiftvector[k][4], self.shiftvector[k][5]), (0), 2)
-                            cv2.rectangle(self.img,(self.shiftvector[k][2], self.shiftvector[k][3]),(self.shiftvector[k][2]+self.blocksize, self.shiftvector[k][3]+self.blocksize), (0), 2)
-                            cv2.rectangle(self.img, (self.shiftvector[k][4], self.shiftvector[k][5]),(self.shiftvector[k][4] + self.blocksize, self.shiftvector[k][5] + self.blocksize), (0), 2)
+                            cv2.rectangle(self.img,(self.shiftvector[k][2], self.shiftvector[k][3]),(self.shiftvector[k][2]+self.blocksize, self.shiftvector[k][3]+self.blocksize), (255), -1)
+                            cv2.rectangle(self.img, (self.shiftvector[k][4], self.shiftvector[k][5]),(self.shiftvector[k][4] + self.blocksize, self.shiftvector[k][5] + self.blocksize), (255), -1)
         cv2.imshow("sonuc",self.img)
 
 
@@ -49,48 +61,52 @@ class DetectionofCopyMoveForgery:
 
         for r in range(0, self.height-self.blocksize, 1):
             for c in range(0, self.width-self.blocksize,1):
+
                 block = self.img[r:r + self.blocksize, c:c + self.blocksize]
-                imf = np.float32(block)  #0 ile 1 arasında normalize ediyoruz
-                dct = cv2.dct(imf)      # block block dst uyguluyoruz ve virgülden sonraki 6. basamağı yumarlıyoruz
-                dct = dct/16
+                imf = np.float32(block)
+                dct = cv2.dct(imf)      # block block dst uyguluyoruz
+                #dct =  np.round(dct/16)
+
+
 
                 QUANTIZATION_MAT_50 = np.array([[16, 11, 10, 16, 24, 40, 51, 61], [12, 12, 14, 19, 26, 58, 60, 55],
                                              [14, 13, 16, 24, 40, 57, 69, 56], [14, 17, 22, 29, 51, 87, 80, 62],
                                              [18, 22, 37, 56, 68, 109, 103, 77], [24, 35, 55, 64, 81, 104, 113, 92],
                                              [49, 64, 78, 87, 103, 121, 120, 101], [72, 92, 95, 98, 112, 100, 103, 99]])
-                QUANTIZATION_MAT_10 = np.array([[80, 60, 50, 80, 120, 200, 255, 255], [55, 60, 70, 95, 130, 255, 255,255],
-                                             [70, 65, 80, 120, 200, 255, 255, 255], [70, 85, 110, 145, 255, 255,255,255],
-                                             [90, 110, 185,  255, 255,255,255,255], [120, 175, 255, 255,255,255, 255,255],
-                                             [255, 255,255,255, 255,255,255,255], [255, 255,255,255, 255,255,255,255]])
+                # QUANTIZATION_MAT_10 = np.array([[80, 60, 50, 80, 120, 200, 255, 255], [55, 60, 70, 95, 130, 255, 255,255],
+                #                              [70, 65, 80, 120, 200, 255, 255, 255], [70, 85, 110, 145, 255, 255,255,255],
+                #                              [90, 110, 185,  255, 255,255,255,255], [120, 175, 255, 255,255,255, 255,255],
+                #                              [255, 255,255,255, 255,255,255,255], [255, 255,255,255, 255,255,255,255]])
                 QUANTIZATION_MAT_90 = np.array([[3, 2, 2, 3, 5, 8, 10, 12], [2, 2, 3, 4, 5, 12, 12, 11],
                                                [3, 3, 3, 5 ,8, 11, 14, 11], [3, 3, 4, 6, 10, 17, 16, 12],
                                                [4, 4, 7, 11, 14, 22, 21, 15], [5, 7, 11, 13, 16, 12, 23, 18],
                                                [10, 13, 16, 17, 21, 24, 24, 21], [14, 18, 19, 20, 22, 20, 20, 20]])
 
-                QUANTIZATION_MAT_50_16 = np.array([[2*16, 2.5*11, 2.5*10, 2.5*16,2.5*24,2.5*40,2.5*51,2.5*61,1,1,1,1,1,1,1,1],
-                                                   [2.5*12,2.5*12,2.5*14,2.5*19,2.5*26,2.5*58,2.5*60,2.5*55, 1,1,1,1,1,1,1,1],
-                                                   [2.5*14,2.5*13,2.5*16,2.5*24,2.5*40,2.5*57,2.5*69,2.5*56, 1,1,1,1,1,1,1,1],
-                                                   [2.5*14,2.5*17,2.5*22,2.5*29,2.5*51,2.5*87,2.5*80,2.5*62, 1,1,1,1,1,1,1,1],
-                                                   [2.5*18,2.5*22,2.5*37,2.5*56,2.5*68,2.5*109,2.5*103,2.5*77, 1,1,1,1,1,1,1,1],
-                                                   [2.5*24,2.5*35,2.5*55,2.5*64,2.5*81,2.5*104,2.5*113,2.5*92, 1,1,1,1,1,1,1,1],
-                                                   [2.5*49,2.5*64,2.5*78,2.5*87,2.5*103,2.5*121,2.5*120,2.5*101, 1,1,1,1,1,1,1,1],
-                                                   [2.5*72,2.5*92,2.5*95,2.5*98,2.5*112,2.5*100,2.5*103,2.5*99, 1,1,1,1,1,1,1,1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
-                #dct donusumu quantalama matrisine bolerek sıkıstırırız iliskilere baktigimiz icin buna gerek olmayabilir..
-                #dct= np.round(np.divide(dct, QUANTIZATION_MAT_50)).astype(int)
-                self.significant_part_extraction(self.zigzag(dct),self.sizeof_vector,c,r)
+                # QUANTIZATION_MAT_50_16 = np.array([[2*16, 2.5*11, 2.5*10, 2.5*16,2.5*24,2.5*40,2.5*51,2.5*61,1,1,1,1,1,1,1,1],
+                #                                    [2.5*12,2.5*12,2.5*14,2.5*19,2.5*26,2.5*58,2.5*60,2.5*55, 1,1,1,1,1,1,1,1],
+                #                                    [2.5*14,2.5*13,2.5*16,2.5*24,2.5*40,2.5*57,2.5*69,2.5*56, 1,1,1,1,1,1,1,1],
+                #                                    [2.5*14,2.5*17,2.5*22,2.5*29,2.5*51,2.5*87,2.5*80,2.5*62, 1,1,1,1,1,1,1,1],
+                #                                    [2.5*18,2.5*22,2.5*37,2.5*56,2.5*68,2.5*109,2.5*103,2.5*77, 1,1,1,1,1,1,1,1],
+                #                                    [2.5*24,2.5*35,2.5*55,2.5*64,2.5*81,2.5*104,2.5*113,2.5*92, 1,1,1,1,1,1,1,1],
+                #                                    [2.5*49,2.5*64,2.5*78,2.5*87,2.5*103,2.5*121,2.5*120,2.5*101, 1,1,1,1,1,1,1,1],
+                #                                    [2.5*72,2.5*92,2.5*95,2.5*98,2.5*112,2.5*100,2.5*103,2.5*99, 1,1,1,1,1,1,1,1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+                # dct donusumu quantalama matrisine bolerek sıkıstırırız iliskilere baktigimiz icin buna gerek olmayabilir..
+                dct= np.round(np.divide(dct, QUANTIZATION_MAT_90)).astype(int)
+                self.significant_part_extraction(self.zigzag(dct),c,r)
 
 
 
     def zigzag(self,matrix):
         """Scan matrix of zigzag algorithm"""
+
         vector = []
         n = len(matrix) - 1
         i = 0
@@ -125,14 +141,13 @@ class DetectionofCopyMoveForgery:
                     j += 1
 
         vector.append(matrix[i][j])
+
         return vector
 
-    def significant_part_extraction(self,vector,significant_size,x,y):
+    def significant_part_extraction(self,vector,x,y):
 
-        # 1x64 boyutundaki vectorden sadece alcak freans yani anlamli kismini cikarmak icin belirlenen(16) degere kadar pop islemi yapilir.
-        for i in range((self.blocksize * self.blocksize), significant_size, -1):
-            vector.pop()
-
+        # 1x64 boyutundaki vectorden sadece alcak freans yani anlamli kismini cikarmak icin belirlenen(16) degere kadar del islemi yapilir.
+        del vector[self.sizeof_vector:(self.blocksize*self.blocksize)]
         vector.append(x)  # blogun baslangıc kordinatının x noktası vektorun sonuna ekleniyor
         vector.append(y)  # aynı sekilde y noktası ekleniyor
         # her block sonucunu vector listemize atiyoruz.

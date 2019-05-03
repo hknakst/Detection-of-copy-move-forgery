@@ -1,27 +1,55 @@
 from DetectionOfCopyMoveForgery import *
 
+def getFmeasure(orginal_img, test_img, width, height):
+
+    DP=0
+    YP=0
+    YN=0
+    for i in range(height):
+        for j in range(width):
+            if orginal_img[i][j]==255 and test_img[i][j]==255:
+                DP +=1
+            if orginal_img[i][j]==0 and test_img[i][j]==255:
+                YP +=1
+            if orginal_img[i][j]==255 and test_img[i][j]==0:
+                YN +=1
+
+    precision =DP/(DP+YP)
+    recall =DP/(DP+YN)
+
+    return 2*((precision*recall)/(precision+recall))
 
 
-# for i in range(160,0,-2):
-#     path ="forged_images/"+str(i)+".png"
-#     img = cv2.imread(path ,0)
-#     height, width= img.shape
-#     asd = DetectionofCopyMoveForgery(img, height, width, 8,1,10,100,5)
-#     asd.detection_forgery()
-#     cv2.waitKey(0)
+# (self, img, height, width, blocksize, oklid_threshold, correlation_threshold, vec_len_threshold, num_ofvector_threshold):
 
-img = cv2.imread("ab.png" ,0)
-height, width= img.shape
-asd = DetectionofCopyMoveForgery(img, height, width, 8,1.5,8,100,5)
-asd.detection_forgery()
-cv2.waitKey(0)
-
-#(self, img, height, width, blocksize, oklid_threshold, correlation_threshold, vec_len_threshold, num_ofvector_threshold):
+for i in range(160,0,-2):
+    path ="forged_images/"+str(i)+".png"
+    img = cv2.imread(path ,0)
+    height, width= img.shape
+    asd = DetectionofCopyMoveForgery(img, height, width, 8,3.5,8,100,5)
+    asd.detection_forgery()
+    cv2.waitKey(0)
+    path = "forged_images/" + str(i-1) + ".png"
+    original_img = cv2.imread(path,0)
+    print(getFmeasure(original_img,img,width,height))
 
 
 
+# img = cv2.imread("photo/foto2_gj90.png" ,0)
+# height, width= img.shape
+# asd = DetectionofCopyMoveForgery(img, height, width, 8,3.5,8,100,5)
+# asd.detection_forgery()
+# cv2.waitKey(0)
+#
+# original_img = cv2.imread("photo/foto2_sonuc.png",0)
+# print(getFmeasure(original_img,img,width,height))
+# cv2.destroyAllWindows()
 
-cv2.destroyAllWindows()
+
+
+
+
+
 
 # z=np.array([[0,0,0,3,4],[1,0,0,1,1],[2,0,0,0,0],[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[0,0,0,10,5],[0,0,0,10,1],[0,0,0,1000,-1]])
 # z1=np.array([[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[1,0,0,1000,0],[0,0,0,10,100],[0,0,0,1000,-1]])
@@ -53,11 +81,11 @@ cv2.destroyAllWindows()
 
 # imf = np.float32(block) / 255.0  # 0 ile 1 arasında normalize ediyoruz
 # dct = np.round(np.int8(cv2.dct(imf) * 255), 1)
-ornek_block = [[154,123,123,123,123,123,123,136],
-               [192,180,136,154,154,154,136,110],
-               [254,198,154,154,180,154,123,123],
-               [239,180,136,180,180,166,123,123],
-               [180,154,136,167,166,149,136,136],
-               [128,136,123,136,154,180,198,154],
-               [123,105,110,149,136,136,180,166],
-               [110,136,123,123,123,136,154,136]]
+# ornek_block = [[154,123,123,123,123,123,123,136],
+#                [192,180,136,154,154,154,136,110],
+#                [254,198,154,154,180,154,123,123],
+#                [239,180,136,180,180,166,123,123],
+#                [180,154,136,167,166,149,136,136],
+#                [128,136,123,136,154,180,198,154],
+#                [123,105,110,149,136,136,180,166],
+#                [110,136,123,123,123,136,154,136]]
