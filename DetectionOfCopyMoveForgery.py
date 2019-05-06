@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from math import sqrt
-import time
+
 
 
 class DetectionofCopyMoveForgery:
@@ -18,42 +18,36 @@ class DetectionofCopyMoveForgery:
 
         self.block_vector=[]
         self.sizeof_vector=16;
-        self.hough_space = (self.height, self.width)
+        self.hough_space = (self.height, self.width,2)
         self.hough_space = np.zeros(self.hough_space)
         self.shiftvector=[]
 
 
     def detection_forgery(self):
-        start = time.time()
+
         self.dct_of_img()
-        end = time.time()
-        print(end - start)
-        start1 = time.time()
         self.lexicographically_sort_of_vectors()
-        end1 = time.time()
-        print(end1 - start1)
-        start2 = time.time()
         self.correlation_of_vectors()
-        end2 = time.time()
-        print(end2 - start2)
 
         #son olarakan belirlenen esik degerine gore ayni dogrultudaki shift vektor sayisina gore sahte alanlar belirleniyor.
         max=-1
         for i in range(self.height):
             for j in range(self.width):
-                if(self.hough_space[i][j]) > max:
-                    max = self.hough_space[i][j]
+                for h in range(2):
+                    if(self.hough_space[i][j][h]) > max:
+                        max = self.hough_space[i][j][h]
         for i in range(self.height):
             for j in range(self.width):
                 self.img[i][j]=0
 
         for i in range(self.height):
             for j in range(self.width):
-                if (self.hough_space[i][j]) >= (max - (max*self.num_ofvector_threshold/100)):
-                    for k in range(len(self.shiftvector)):
-                        if self.shiftvector[k][0]==j and self.shiftvector[k][1]==i:
-                            cv2.rectangle(self.img,(self.shiftvector[k][2], self.shiftvector[k][3]),(self.shiftvector[k][2]+self.blocksize, self.shiftvector[k][3]+self.blocksize), (255), -1)
-                            cv2.rectangle(self.img, (self.shiftvector[k][4], self.shiftvector[k][5]),(self.shiftvector[k][4] + self.blocksize, self.shiftvector[k][5] + self.blocksize), (255), -1)
+                for h in range(2):
+                    if (self.hough_space[i][j][h]) >= (max - (max*self.num_ofvector_threshold/100)):
+                        for k in range(len(self.shiftvector)):
+                            if (self.shiftvector[k][0]==j and self.shiftvector[k][1]==i and self.shiftvector[k][2]==h):
+                                cv2.rectangle(self.img,(self.shiftvector[k][3], self.shiftvector[k][4]),(self.shiftvector[k][3]+self.blocksize, self.shiftvector[k][4]+self.blocksize), (255), -1)
+                                cv2.rectangle(self.img, (self.shiftvector[k][5], self.shiftvector[k][6]),(self.shiftvector[k][5] + self.blocksize, self.shiftvector[k][6] + self.blocksize), (255), -1)
         cv2.imshow("sonuc",self.img)
 
 
@@ -65,18 +59,18 @@ class DetectionofCopyMoveForgery:
                 block = self.img[r:r + self.blocksize, c:c + self.blocksize]
                 imf = np.float32(block)
                 dct = cv2.dct(imf)      # block block dst uyguluyoruz
-                #dct =  np.round(dct/16)
+                dct =  np.round(dct/16).astype(int)
 
 
-
-                QUANTIZATION_MAT_50 = np.array([[16, 11, 10, 16, 24, 40, 51, 61], [12, 12, 14, 19, 26, 58, 60, 55],
-                                             [14, 13, 16, 24, 40, 57, 69, 56], [14, 17, 22, 29, 51, 87, 80, 62],
-                                             [18, 22, 37, 56, 68, 109, 103, 77], [24, 35, 55, 64, 81, 104, 113, 92],
-                                             [49, 64, 78, 87, 103, 121, 120, 101], [72, 92, 95, 98, 112, 100, 103, 99]])
                 # QUANTIZATION_MAT_10 = np.array([[80, 60, 50, 80, 120, 200, 255, 255], [55, 60, 70, 95, 130, 255, 255,255],
                 #                              [70, 65, 80, 120, 200, 255, 255, 255], [70, 85, 110, 145, 255, 255,255,255],
                 #                              [90, 110, 185,  255, 255,255,255,255], [120, 175, 255, 255,255,255, 255,255],
                 #                              [255, 255,255,255, 255,255,255,255], [255, 255,255,255, 255,255,255,255]])
+                QUANTIZATION_MAT_50 = np.array([[16, 11, 10, 16, 24, 40, 51, 61], [12, 12, 14, 19, 26, 58, 60, 55],
+                                             [14, 13, 16, 24, 40, 57, 69, 56], [14, 17, 22, 29, 51, 87, 80, 62],
+                                             [18, 22, 37, 56, 68, 109, 103, 77], [24, 35, 55, 64, 81, 104, 113, 92],
+                                             [49, 64, 78, 87, 103, 121, 120, 101], [72, 92, 95, 98, 112, 100, 103, 99]])
+
                 QUANTIZATION_MAT_90 = np.array([[3, 2, 2, 3, 5, 8, 10, 12], [2, 2, 3, 4, 5, 12, 12, 11],
                                                [3, 3, 3, 5 ,8, 11, 14, 11], [3, 3, 4, 6, 10, 17, 16, 12],
                                                [4, 4, 7, 11, 14, 22, 21, 15], [5, 7, 11, 13, 16, 12, 23, 18],
@@ -98,8 +92,10 @@ class DetectionofCopyMoveForgery:
                 #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 #                                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+
+
                 # dct donusumu quantalama matrisine bolerek sıkıstırırız iliskilere baktigimiz icin buna gerek olmayabilir..
-                dct= np.round(np.divide(dct, QUANTIZATION_MAT_90)).astype(int)
+                #dct= np.round(np.divide(dct, QUANTIZATION_MAT_90)).astype(int)
                 self.significant_part_extraction(self.zigzag(dct),c,r)
 
 
@@ -213,10 +209,22 @@ class DetectionofCopyMoveForgery:
         #kendi koordinatlari vektorde tutuluyor ve bu vektorlerde block block shift vektore atiliyor.
         c = abs(vector2[0]-vector1[0])
         r = abs(vector2[1]-vector1[1])
-        self.hough_space[r][c] +=1
+        if (vector2[0]>=vector1[0]):
+            if(vector2[1]>=vector1[1]):
+                z = 0
+            else:
+                z = 1
+
+        if (vector1[0] > vector2[0]):
+            if (vector1[1] >= vector2[1]):
+                z = 0
+            else:
+                z = 1
+        self.hough_space[r][c][z] +=1
         vector=[]
         vector.append(c)
         vector.append(r)
+        vector.append(z)
         vector.append(vector1[0])
         vector.append(vector1[1])
         vector.append(vector2[0])
@@ -227,7 +235,6 @@ class DetectionofCopyMoveForgery:
     def oklid(self,vector1,vector2,size):
         sum=0
         for i in range(size):
-            #sum += pow((vector2[i]-vector1[i]),2)
             sum += (vector2[i]-vector1[i])**2
 
         return sqrt(sum)

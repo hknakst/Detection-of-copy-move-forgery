@@ -20,72 +20,38 @@ def getFmeasure(orginal_img, test_img, width, height):
     return 2*((precision*recall)/(precision+recall))
 
 
-# (self, img, height, width, blocksize, oklid_threshold, correlation_threshold, vec_len_threshold, num_ofvector_threshold):
-
-for i in range(160,0,-2):
-    path ="forged_images/"+str(i)+".png"
-    img = cv2.imread(path ,0)
-    height, width= img.shape
-    asd = DetectionofCopyMoveForgery(img, height, width, 8,3.5,8,100,5)
-    asd.detection_forgery()
-    cv2.waitKey(0)
-    path = "forged_images/" + str(i-1) + ".png"
-    original_img = cv2.imread(path,0)
-    print(getFmeasure(original_img,img,width,height))
 
 
-
-# img = cv2.imread("photo/foto2_gj90.png" ,0)
-# height, width= img.shape
-# asd = DetectionofCopyMoveForgery(img, height, width, 8,3.5,8,100,5)
-# asd.detection_forgery()
-# cv2.waitKey(0)
-#
-# original_img = cv2.imread("photo/foto2_sonuc.png",0)
-# print(getFmeasure(original_img,img,width,height))
-# cv2.destroyAllWindows()
+# for i in range(160,0,-2):
+#     path ="forged_images/"+str(i)+".png"
+#     img = cv2.imread(path ,0)
+#     height, width= img.shape
+#     # (img, height, width, blocksize, oklid_threshold, correlation_threshold, vec_len_threshold, num_ofvector_threshold)
+#     asd = DetectionofCopyMoveForgery(img, height, width, 8,3.5,8,100,5)
+#     asd.detection_forgery()
+#     cv2.waitKey(0)
+#     path = "forged_images/" + str(i-1) + ".png"
+#     original_img = cv2.imread(path,0)
+#     print(getFmeasure(original_img,img,width,height))
 
 
 
+img = cv2.imread("photo/foto5.png" ,0)
+height, width= img.shape
+# (img, height, width, blocksize, oklid_threshold, correlation_threshold, vec_len_threshold, num_ofvector_threshold)
+asd = DetectionofCopyMoveForgery(img, height, width, 8,3.5,8,100,5)
+asd.detection_forgery()
+cv2.waitKey(0)
+
+original_img = cv2.imread("photo/foto5_sonuc.png",0)
+print(getFmeasure(original_img,img,width,height))
+cv2.destroyAllWindows()
 
 
 
 
-# z=np.array([[0,0,0,3,4],[1,0,0,1,1],[2,0,0,0,0],[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[0,0,0,10,5],[0,0,0,10,1],[0,0,0,1000,-1]])
-# z1=np.array([[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[1,0,0,1000,0],[0,0,0,10,100],[0,0,0,1000,-1]])
-# asd2=np.array([[0,0,0,1,3,4],[1,0,0,1,1,1],[2,0,0,0,0,0],[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[0,0,0,10,5],[0,0,0,10,100],[0,0,0,1000,-1]])
-# asd1=np.array([[0,0,0,1,3,4],[1,0,0,1,1,1],[2,0,0,0,0,0],[1,1,22,3,4],[5,6,7,8,9],[1,11,12,13,14],[1,1,17,18,19],[5,6,2,23,24],[1,1,18,1,1],[0,0,0,10,5],[0,0,0,10,100],[0,0,0,1000,-1]])
-#
-# ornek1 =np.array([[4.292648e+00, -2.557200e-02 , 8.106000e-03 ,-1.263000e-03  ,4.900000e-04,-6.420000e-04 , 3.560000e-04 , 7.400000e-04],
-#         [-9.027000e-03 , 8.920000e-04 , 1.274000e-03,  3.125000e-03 , 3.000000e-06, 3.720000e-04 , 1.723000e-03, -1.109000e-03],
-#         [ 7.960000e-04, -1.097300e-02 ,-1.091300e-02,  1.189000e-03 ,-1.326000e-03, 5.416000e-03, -2.630000e-04, -8.770000e-04],
-#         [ 2.357000e-03,  1.394000e-03 ,-8.904000e-03 , 2.170000e-03 ,-1.769000e-03, 2.548000e-03 , 9.920000e-04, -1.213000e-03],
-#         [-2.451000e-03 ,-1.164000e-03 , 6.400000e-04 , 8.920000e-04 ,-4.900000e-04, 3.442000e-03 , 2.650000e-04, -6.460000e-04],
-#         [ 1.187000e-03 , 3.005000e-03 , 1.995000e-03 ,-3.454000e-03 , 1.766000e-03 ,-3.280000e-04,  3.440000e-04, 3.355000e-03],
-#         [-1.921000e-03,  2.730000e-04 ,-3.204000e-03 , 3.510000e-04 , 3.202000e-03, 8.730000e-04 , 5.031000e-03 , 1.677000e-03],
-#         [ 3.531000e-03 , 7.330000e-04, -4.000000e-04,  1.589000e-03 , 2.499000e-03,-6.280000e-04 ,-2.988000e-03 , 5.110000e-03]])
-#
-# ornek2=[[ 3.35000e+00,  1.72303e-01 , 2.92690e-02 , 2.25820e-02 , 2.15690e-02, -5.11600e-03 ,-3.63400e-03 , 4.42100e-03],
-#          [ 5.47430e-02,  5.91340e-02, -6.73300e-03, -1.62800e-03, -3.70000e-03,-4.32400e-03 ,-3.52100e-03, -9.09000e-04],
-#          [-7.46600e-03, -1.34400e-02, -8.97700e-03, -7.83000e-04, -1.81200e-03,-6.56000e-04 , 2.57000e-03 , 1.67400e-03],
-#          [-1.43730e-02 ,-1.06680e-02 , 1.23150e-02, -1.80900e-03 , 2.25400e-03,4.21900e-03 ,-2.43700e-03 ,-8.77000e-04],
-#          [-9.80000e-04 , 8.39000e-04 , 1.55000e-04,  2.21800e-03, -1.96100e-03,5.90000e-05 ,-2.18700e-03 , 3.74000e-04],
-#          [-2.30200e-03 , 1.84000e-04, -2.29100e-03 ,-2.18800e-03 , 6.72000e-04,-5.50000e-04 , 5.50000e-04 , 2.67200e-03],
-#          [-9.10000e-05 , 1.45000e-03 , 1.59000e-03 , 1.99400e-03,  7.50000e-04,-1.53000e-04 , 2.11500e-03 ,-1.28800e-03],
-#          [-1.29800e-03, -1.43400e-03 ,-5.74000e-04 ,-3.13400e-03 ,-2.90000e-05,-9.34000e-04, -1.33400e-03 ,-1.87400e-03]]
-
-# img2 = np.zeros((self.blocksize, self.blocksize), dtype=np.float32)
-# img2 = img2 + block[:self.blocksize, :self.blocksize]
-# dct = cv2.dct(img2)
 
 
-# imf = np.float32(block) / 255.0  # 0 ile 1 arasında normalize ediyoruz
-# dct = np.round(np.int8(cv2.dct(imf) * 255), 1)
-# ornek_block = [[154,123,123,123,123,123,123,136],
-#                [192,180,136,154,154,154,136,110],
-#                [254,198,154,154,180,154,123,123],
-#                [239,180,136,180,180,166,123,123],
-#                [180,154,136,167,166,149,136,136],
-#                [128,136,123,136,154,180,198,154],
-#                [123,105,110,149,136,136,180,166],
-#                [110,136,123,123,123,136,154,136]]
+
+
+
