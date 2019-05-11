@@ -59,13 +59,13 @@ class DetectionofCopyMoveForgery:
                 block = self.img[r:r + self.blocksize, c:c + self.blocksize]
                 imf = np.float32(block)
                 dct = cv2.dct(imf)      # block block dst uyguluyoruz
-                dct =  np.round(dct/16).astype(int)
 
 
-                # QUANTIZATION_MAT_10 = np.array([[80, 60, 50, 80, 120, 200, 255, 255], [55, 60, 70, 95, 130, 255, 255,255],
-                #                              [70, 65, 80, 120, 200, 255, 255, 255], [70, 85, 110, 145, 255, 255,255,255],
-                #                              [90, 110, 185,  255, 255,255,255,255], [120, 175, 255, 255,255,255, 255,255],
-                #                              [255, 255,255,255, 255,255,255,255], [255, 255,255,255, 255,255,255,255]])
+
+                QUANTIZATION_MAT_10 = np.array([[80, 60, 50, 80, 120, 200, 255, 255], [55, 60, 70, 95, 130, 255, 255,255],
+                                             [70, 65, 80, 120, 200, 255, 255, 255], [70, 85, 110, 145, 255, 255,255,255],
+                                             [90, 110, 185,  255, 255,255,255,255], [120, 175, 255, 255,255,255, 255,255],
+                                             [255, 255,255,255, 255,255,255,255], [255, 255,255,255, 255,255,255,255]])
                 QUANTIZATION_MAT_50 = np.array([[16, 11, 10, 16, 24, 40, 51, 61], [12, 12, 14, 19, 26, 58, 60, 55],
                                              [14, 13, 16, 24, 40, 57, 69, 56], [14, 17, 22, 29, 51, 87, 80, 62],
                                              [18, 22, 37, 56, 68, 109, 103, 77], [24, 35, 55, 64, 81, 104, 113, 92],
@@ -95,7 +95,8 @@ class DetectionofCopyMoveForgery:
 
 
                 # dct donusumu quantalama matrisine bolerek sıkıstırırız iliskilere baktigimiz icin buna gerek olmayabilir..
-                #dct= np.round(np.divide(dct, QUANTIZATION_MAT_90)).astype(int)
+                dct= np.round(np.divide(dct, QUANTIZATION_MAT_90)).astype(int)
+                #dct = (dct/8).astype(int)
                 self.significant_part_extraction(self.zigzag(dct),c,r)
 
 
