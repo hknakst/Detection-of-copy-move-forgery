@@ -1,10 +1,12 @@
 # Detection-of-copy-move-forgery
 
+![algorithm](https://github.com/hknakst/Detection-of-copy-move-forgery/blob/master/photos/algorithm.png)
+
 **The objective of the project**: In this Project, it is aimed to determine the frauds that can be made by copying a certain area within an image and sticking to the same image. Again, this project is intended to be resistant to algorithms that compress an image, such as jpeg.
 
 
 
-##Türkçe dökümanı (Turkish document)
+## Türkçe dökümanı (Turkish document)
 **Projenin hedefi**: Bu Projede bir görüntünün içerisinde yer alan belirli bir alanın
 kopyalanarak, yine aynı görüntüye yapıştırılmasıyla yapılabilecek sahteciliklerin tesbit
 edilmesi hedeflenmektedir.Yine bu projenin, jpeg gibi bir görüntüyü sıkıştıran
@@ -61,3 +63,6 @@ konumu tesbit ederek bu sayının %90’ınından büyük olan bölgeleri bulduk
 bu doğrultuya sahip vektörleri yine bu uzaydan elde ettik ve sahteciliği tesbit etmiş olduk.
 
 ## sample results (örnek sonuçlar)
+
+![result2](https://github.com/hknakst/Detection-of-copy-move-forgery/blob/master/photos/result2.png)
+![result1](https://github.com/hknakst/Detection-of-copy-move-forgery/blob/master/photos/result1.png)
