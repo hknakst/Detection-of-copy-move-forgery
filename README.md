@@ -2,7 +2,7 @@
 
 ![algorithm](https://github.com/hknakst/Detection-of-copy-move-forgery/blob/master/photos/algorithm.png)
 
-**The objective of the project**: In this Project, it is aimed to determine the frauds that can be made by copying a certain area within an image and sticking to the same image. Again, this project is intended to be resistant to algorithms that compress an image, such as jpeg.
+**The objective of the project**: In this Project, it is aimed to determine the frauds that can be made by copying a certain area within an image and pasting it to the same image. Also this project is intended to be resistant to algorithms that compress an image, such as jpeg.
 
 
 
