@@ -96,7 +96,7 @@ class DetectionofCopyMoveForgery:
 
                 # dct donusumu quantalama matrisine bolerek sıkıstırırız iliskilere baktigimiz icin buna gerek olmayabilir..
                 dct= np.round(np.divide(dct, QUANTIZATION_MAT_90)).astype(int)
-                #dct = (dct/8).astype(int)
+                dct = (dct/4).astype(int)
                 self.significant_part_extraction(self.zigzag(dct),c,r)
 
 

@@ -36,14 +36,14 @@ def getFmeasure(orginal_img, test_img, width, height):
 
 
 
-img = cv2.imread("photo/foto1_gj90.png" ,0)
+img = cv2.imread("example_photo/foto4_gj90.png" ,0)
 height, width= img.shape
 # (img, height, width, blocksize, oklid_threshold, correlation_threshold, vec_len_threshold, num_ofvector_threshold)
 asd = DetectionofCopyMoveForgery(img, height, width, 8,3.5,8,100,5)
 asd.detection_forgery()
 cv2.waitKey(0)
 
-original_img = cv2.imread("photo/foto1_sonuc.png",0)
+original_img = cv2.imread("photo/foto4_sonuc.png",0)
 print(getFmeasure(original_img,img,width,height))
 cv2.destroyAllWindows()
 
