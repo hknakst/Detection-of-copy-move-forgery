@@ -14,7 +14,7 @@ class DetectionofCopyMoveForgery:
         self.oklid_threshold = oklid_threshold
         self.correlation_threshold = correlation_threshold
         self.vec_len_threshold = vec_len_threshold
-        self.num_ofvector_threshold=num_ofvector_threshold
+        self.num_ofvector_threshold = num_ofvector_threshold
 
         self.block_vector=[]
         self.sizeof_vector=16;
@@ -218,6 +218,7 @@ class DetectionofCopyMoveForgery:
 
         if (vector1[0] > vector2[0]):
             if (vector1[1] >= vector2[1]):
+
                 z = 0
             else:
                 z = 1
